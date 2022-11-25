@@ -1,8 +1,18 @@
 {
   "devDependencies": {
+    "lite-server": "^2.6.1",
     "typescript": "^4.8.4"
   },
   "dependencies": {
     "yarn": "^1.22.19"
-  }
+  },
+  "name": "typescript-practice-2022",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "lite-server"
+  },
+  "repository": "https://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@github.com/blueprint-12/typescript-practice-2022.git",
+  "author": "blueprint-12 <blueprint12@daum.net>",
+  "license": "MIT"
 }
