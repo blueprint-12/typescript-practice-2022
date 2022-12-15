@@ -6,8 +6,7 @@
 * [타입스크립트 핸드북 eng🔥](https://www.typescriptlang.org/docs/handbook/intro.html)
 * [타입스크립트 가이드북](https://yamoo9.gitbook.io/typescript/)
 * [타입스크립트 핸드북 kor](https://typescript-handbook-ko.org/)
-
-
+<hr/>
 
 - tsc watch mode: 매번 해당 파일을 js로 컴파일할 필요없이 변동사항이 생기면 알아서 재컴파일
   (개발 시 이 모드를 취소할 필요없이 ctrl + c 를 통해 중단가능)
