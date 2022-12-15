@@ -1,6 +1,13 @@
 # typescript-practice-2022
 
 타입스크립트에 대해 공부한 자료를 올리는 개인 레포입니다.
+> 필독 표시: 🔥
+* [타입스크립트 공식문서](https://www.typescriptlang.org/)
+* [타입스크립트 핸드북 eng🔥](https://www.typescriptlang.org/docs/handbook/intro.html)
+* [타입스크립트 가이드북](https://yamoo9.gitbook.io/typescript/)
+* [타입스크립트 핸드북 kor](https://typescript-handbook-ko.org/)
+
+
 
 - tsc watch mode: 매번 해당 파일을 js로 컴파일할 필요없이 변동사항이 생기면 알아서 재컴파일
   (개발 시 이 모드를 취소할 필요없이 ctrl + c 를 통해 중단가능)
