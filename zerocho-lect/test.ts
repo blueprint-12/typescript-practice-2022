@@ -301,3 +301,97 @@ forEach([1, 2, 3], (el) => target.push(el));
     return undefined;
   }
 }
+//타입 좁히기(타입 가드)
+{
+  function numOnStr(a: number | string) {
+    // if (typeof a === "string") {
+    //   a.split(",");
+    // } else {
+    //   a.toFixed(1);
+    // }
+    (a as number).toFixed(1); // number면 쓸 수 있지만 string일수도 있기 때문에
+    //TS에러메세지가 여러 줄이 뜰 때에는 결국에는 마지막 줄을 보면 된다.
+  }
+  numOnStr("123");
+  numOnStr(1);
+}
+
+{
+  function numOnNumArr(a: number | number[]) {
+    //a가 배열임을 확인하려면 Array.isArray() 메서드를 사용하면 된다.
+    if (Array.isArray(a)) {
+      a.concat(4);
+    } else {
+      a.toFixed(3);
+    }
+  }
+}
+{
+  //클래스는 그 자체로 타입이 될 수 있다.
+  class A {
+    aaa() {}
+  }
+  class B {
+    aaa() {}
+  }
+
+  //주의: 매개변수로 들어간 A, B는 클래스 자체를 가리키는 것은 아니고 new 키워드를 통해 생성된
+  // A인스턴스, B인스턴스를 말한다. -> 인스턴스 타입핑은 클래스명으로 한다.
+
+  //클래스 분기처리는 instanceof 로 클래스 검사를 해서 분기처리한다.
+  function aOrB(param: A | B) {
+    if (param instanceof A) {
+      param.aaa();
+    } else {
+      param.aaa();
+    }
+  }
+  //aOrB(A);
+  // aOrB(new A()); //그래서 위처럼 넘겨주는 것이 아니라 아래처럼 넘겨줘야 한다.
+}
+{
+  //객체 타입 구분-> 배열과 다르게 isArray() 같은게 없음
+  // 프로퍼티로 구분을 해줘야 한다. -> 경우는 크게 2가지
+  //1) 프로퍼티의 값이 다른 경우 2) 프로퍼티명 자체가 다른 경우
+  type B = { type: "b"; bbb: string };
+  type C = { type: "c"; ccc: string };
+  type D = { type: "d"; ddd: string };
+
+  function typeCheck(a: B | C | D) {
+    //a객체 안에 bbb라는 속성이 있을 경우
+    if ("bbb" in a) {
+      a.bbb;
+    } else if ("ccc" in a) {
+      a.ccc;
+    } else {
+      a.ddd;
+    }
+  }
+}
+{
+  //타입을 구분해주는 커스텀 함수를 직접 만들 수 있다.
+  interface Cat {
+    meow: number;
+  }
+  interface Dog {
+    bow: number;
+  }
+  function catOrDog(a: Cat | Dog): a is Dog {
+    //타입 판별을 직접 만든다.
+    //return 타입에 is 가 들어가 있는 애들은 커스텀 타입 가드 함수이다.
+    //이 함수는 if문 안의 조건문에 사용된다. 대신에 타입 판별하는 코드는 직접 작성해야 한다.
+    if ((a as Cat).meow) {
+      return false;
+    }
+    return true;
+  }
+
+  function pet(a: Cat | Dog) {
+    if (catOrDog(a)) {
+      console.log(a.bow);
+    }
+    if ("meow" in a) {
+      console.log(a.meow);
+    }
+  }
+}
