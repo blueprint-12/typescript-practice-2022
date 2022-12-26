@@ -395,3 +395,20 @@ forEach([1, 2, 3], (el) => target.push(el));
     }
   }
 }
+{
+  class A {
+    private a: string = "123"; //권장 private syntax from TS
+    #b: number = 123; // 비권장 private syntax from JS
+
+    // constructor(a: string, b: number = 123) {
+    //   this.a = "123";
+    //   this.b = 123;
+    // }
+
+    method() {
+      console.log(this.a, this.#b);
+    }
+  }
+  const aaa: A = new A();
+  console.log(aaa);
+}
