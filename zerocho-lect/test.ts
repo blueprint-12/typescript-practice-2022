@@ -412,3 +412,80 @@ forEach([1, 2, 3], (el) => target.push(el));
   const aaa: A = new A();
   console.log(aaa);
 }
+//클래스 추가
+{
+  class B {
+    //즉 A인터페이스에 있는 a b 속성을 class B에서 구현해야 함
+    private a: string = "123";
+    protected b: string = "world";
+    c: string = "hihi";
+  }
+  class C extends B {
+    classCMethod() {
+      // console.log(this.a);
+      console.log(this.b);
+      console.log(this.c);
+    }
+  }
+  // new C().b;
+  new C().c;
+}
+{
+  //optional 속성명 바로 뒤에 "?" 를 붙이면 된다.
+  //인터페이스나 타입에서도 사용가능하다.
+  //필수가 아닌 선택사항(있어도 되고 없어도 될 arg에 쓴다.)
+  function abc(a: number, b?: number, c?: number) {}
+  abc(1);
+  abc(1, 2);
+  abc(1, 2, 3);
+
+  //여러 수의 args를 받을 경우
+  function manyArgs(...args: number[]) {}
+  manyArgs(1, 2, 3, 4);
+}
+{
+  //제네릭!!!
+  //제네릭이란 함수를 선언할 때말고 함수를 실행할 때 타입이 정해진다.
+  //제네릭으로 매개변수를 받는 것을 제한할 수 있음(extends 키워드를 통해)
+  //제네릭을 여러개 동시에 만들면서 각각 다른 제한을 줄 수 있음
+  function add<T extends number, K extends string>(x: T, y: K): T {
+    return x;
+  }
+}
+{
+  //콜백함수 형태제한
+  function add<T extends (a: string) => number>(x: T): T {
+    return x;
+  }
+  add((a) => +a);
+}
+{
+  //생성자를 넣을 때
+  function add<T extends abstract new (...args: any) => any>(x: T): T {
+    return x;
+  }
+
+  //클래스 A 자체가 타입이고 내부에 constructor가 있기 때문에
+  class A {
+    constructor() {}
+  }
+
+  add(A); //new A() 는 에러
+  // <T extends abstract new (...args: any) => any> // 생성자 타입
+}
+
+// 제네릭 사용 시, 매개변수 기본값(default value) ES2015문법
+
+{
+  const a = (a: number = 3, b: number = 5) => {
+    return 3;
+  };
+
+  //기본값은 참조형도 가능하다. 객체
+  const b = (c: { childNum: number } = { childNum: 3 }) => {
+    return c.childNum;
+  };
+}
+{
+  //리액트에서 제네릭 사용 시 주의사항
+}
