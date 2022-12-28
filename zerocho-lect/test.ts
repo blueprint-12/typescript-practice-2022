@@ -488,4 +488,11 @@ forEach([1, 2, 3], (el) => target.push(el));
 }
 {
   //리액트에서 제네릭 사용 시 주의사항
+  //TS가 기본값을 추론하지 못할 때 제네릭에 기본값을 넣어준다.
+  //const add = <T extends unknown>
+  const add = <T = unknown>(x: T, y: T) => ({
+    x,
+    y,
+  });
+  const result = add(1, 2);
 }
