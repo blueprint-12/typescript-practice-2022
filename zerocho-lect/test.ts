@@ -496,3 +496,14 @@ forEach([1, 2, 3], (el) => target.push(el));
   });
   const result = add(1, 2);
 }
+
+//공변성과 반공변성(용어는 신경안써도 된다.)
+{
+  function a(x: string): number {
+    return +x;
+  }
+  a("1"); // 1
+
+  type B = (x: string) => number | string;
+  const b: B = a; //서로 타입이 다른데 대입이 된다. why?
+}

@@ -62,15 +62,56 @@
   const filteredResult = ["1", 2, "3", 4, "5"].filter(predicate);
 }
 {
-  interface Arr {
-    forEach(callBack: (item: number) => void): void;
+  interface Arr<T> {
+    forEach(callBack: (item: T) => void): void;
   }
-  const a: Arr = [1, 2, 3];
+  const a: Arr<number> = [1, 2, 3];
   a.forEach((item) => console.log(item));
   a.forEach((item) => {
     console.log(item);
-    return 3;
+    return "3";
+  });
+  //제네릭이 제대로 추론하지 못할 경우 직접 명시-> 권고되지않음
+  a.forEach((item) => {
+    console.log(item);
+    item.toFixed(1);
   });
 
-  const b: Arr = ["1", "2", "3"];
+  const b: Arr<string> = ["1", "2", "3"];
+  b.forEach((item) => {
+    console.log(item);
+    item.charAt(3);
+  });
+}
+//타입을 직접 다 구현한다 하지말고 만들어보면서 타입을 수정하면 된다.
+
+{
+  interface Arr<T> {
+    forEach(callback: (item: T, index: number) => void): void;
+    //맵을 사용하는 순간에 새로운 제네릭인 S을 추가
+    map<S>(callback: (v: T, i: number) => S): S[];
+    //v가 T 타입인데 리턴값이 S가 될 수 없다는 말 하지만 S가 T의 부분집합일 경우
+    //가능하다. 이럴 때 쓰는 것이 extends 키워드
+    //커스텀 타입가드(형식 조건자) -> 넓은 타입을 좁은 타입으로 좁혀주는 것 predicate
+    filter<S extends T>(callback: (v: T) => v is S): S[];
+  }
+
+  /*
+  const a: Arr<number> = [1, 2, 3]; //a가 number니까 map의 v도 number
+  const b = a.map((v, i) => v + 1); // [2,3,4]
+  const c = a.map((v, i) => v.toString()); // ["1", "2" , "3"]
+  const d = a.map((v, i) => v % 2 === 0); // [false, true, false]
+  const e: Arr<string> = ["1", "2", "3"];
+  const f = e.map((v) => +v); //string to number "f"의 추론이 number[] 로 나오면 성공!
+  */
+
+  //Array.filter 구현해보기
+  const a: Arr<number> = [1, 2, 3];
+  const b = a.filter((v): v is number => v % 2 === 0); // [2] b는 number[]이어야 한다.
+  const c: Arr<number | string> = [1, "2", 3, "4", 5];
+  const d = c.filter((v): v is string => typeof v === "string");
+
+  //predicate을 밖으로 빼도 되고 위처럼 인라인으로 작성해줘도 된다.
+  const predicate = (v: string | number): v is number => typeof v === "number";
+  const e = c.filter(predicate);
 }
