@@ -1,13 +1,15 @@
-const a: string = "5";
-const b: number = 5;
-const c: boolean = true;
-const d: undefined = undefined;
-const e: null = null;
-const f: any = true; //any 타입은 js를 쓰는 것이랑 같다. ts의 주 목적은 any를 없애는 것
-const g: 5 = 5; // 타입 자리에 아예 고정된 원시값을 넣을 수도 있다.e.g. boolean 대신 true
-//함수에는 매개변수와 리턴에 타입을 명시해줘야 한다.
-function add(x: number, y: number): number {
-  return x + y;
+{
+  const a: string = "5";
+  const b: number = 5;
+  const c: boolean = true;
+  const d: undefined = undefined;
+  const e: null = null;
+  const f: any = true; //any 타입은 js를 쓰는 것이랑 같다. ts의 주 목적은 any를 없애는 것
+  const g: 5 = 5; // 타입 자리에 아예 고정된 원시값을 넣을 수도 있다.e.g. boolean 대신 true
+  //함수에는 매개변수와 리턴에 타입을 명시해줘야 한다.
+  function add(x: number, y: number): number {
+    return x + y;
+  }
 }
 
 //화살표 함수 타입 명시
@@ -499,11 +501,87 @@ forEach([1, 2, 3], (el) => target.push(el));
 
 //공변성과 반공변성(용어는 신경안써도 된다.)
 {
-  function a(x: string): number {
+  function a(x: string | number): number {
     return +x;
   }
   a("1"); // 1
 
   type B = (x: string) => number | string;
-  const b: B = a; //서로 타입이 다른데 대입이 된다. why?
+  const b: B = a; //서로 타입이 다른데 대입이 된다.
+  // why? 리턴값(타입)이 작은 쪽이 더 넓은 쪽으로 대입할 수 있다(반대는 안됨)
+  // but, 매개변수는 넓은 타입이 좁은 타입에 대입이 된다.(리턴타입과 반대라고 생각하면 된다.)
 }
+
+{
+  //타입추론에서 "타입 넓히기"가 있음 아래는 예시
+  let a = 5; //a의 타입은 number, let이니까 5가 변할 수 있으므로
+
+  //타입가드가 "타입 좁히기"이다. 아래는 예시
+  let b: string | number = 5;
+  if (typeof b === "number") {
+    b.toFixed(3);
+  }
+}
+
+//오버로딩
+//타입을 하나로만 하는 것이 베스트긴하지만 다 못할 때 사용한다.(제네릭으로 깔끔하게 못만들겠다 싶을때 쓰면 좋을듯)
+
+// declare를 함수 앞에 붙이면 선언만하고 구현부(body부분)는 쓰지 않아도 TS가 인식하기로는 구현부는 다른 곳에 있구나
+//라고 속일 수 있다.
+declare function add(x: number, y: number): number;
+declare function add(x: number, y: number, z?: number): number;
+declare function add(x: string, y: string): string;
+add(1, 2);
+add(2, 3, 4);
+add("1", "2");
+
+//인터페이스, 클래스 내부에서 전부 오버로딩가능
+//오버로딩을 했으면 실제 구현부에서는 any를 사용해도 된다.
+{
+  interface Add {
+    (x: number, y: number): number;
+    (x: string, y: string): string;
+  }
+  const add: Add = (x: any, y: any) => x + y;
+  add(1, 2);
+  add("1", "2");
+  // add("1", 2);
+
+  class A {
+    add(x: number, y: number): number;
+    add(x: string, y: string): string;
+    add(x: any, y: any) {
+      return x + y;
+    }
+  }
+  const c = new A().add(1, 2); // c는 number
+}
+//타입스크립트 에러 처리법(부제: TS는 건망증이 심하다)
+//타입을 모두 정의하려면 머리아픔-> 지금 내가 쓰고 있는 코드가 돌아가게끔 만들면 된다.
+//err는 무조건 unknown인데 즉 as로 타입명시를 사용시 해줘야 한다.
+interface Axios {
+  get(): void;
+}
+//기존 JS Error 객체에는 아래의 속성밖에 없음
+/*
+ name: string;
+ message: string;
+ stack?: string;
+*/
+class CustomError extends Error {
+  //response값이 있을수도 없을 수도 있기 때문에 "?""
+  response?: {
+    data: any;
+  };
+}
+declare const axios: Axios;
+(async () => {
+  try {
+    await axios.get();
+  } catch (err: unknown) {
+    if (err instanceof CustomError) {
+      console.error(err.response?.data);
+      console.log(err);
+    }
+  }
+})();
