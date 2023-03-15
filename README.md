@@ -37,5 +37,3 @@ yarn add lite-server --dev
     "start": "lite-server"
   },
 ```
-
-fetch test!
